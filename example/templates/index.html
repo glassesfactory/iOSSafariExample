@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1" name="viewport" />
+    <title>Example</title>
+    <link href="assets/css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/screen.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/transition.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="underLeft"></div>
+      <div id="underRight"></div>
+      <div class="panel" id="container">
+        <div class="content" id="main">
+          <header>
+            <h1>
+              <img height="63" src="assets/images/logo.png" width="235" />
+            </h1>
+          </header>
+          <nav>{% for entry in entries %}<li>
+              <a href="{{entry.id}}"><img height="29" src="assets/images/menu.png" width="104" /></a>
+            </li>{% endfor %}</nav>
+          <footer>
+            <img height="14" src="assets/images/copyright.png" width="320" />
+          </footer>
+        </div>
+      </div>
+      <div class="panel" id="reverse"></div>
+    </div>
+    <script src="assets/js/libs/head.load.min.js" type="text/javascript"></script>
+    <script src="assets/js/main.js" type="text/javascript"></script>
+  </body>
+</html>

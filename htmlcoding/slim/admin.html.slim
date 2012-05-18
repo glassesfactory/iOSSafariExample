@@ -1,0 +1,48 @@
+doctype html
+html
+	head
+		meta charset="utf-8"
+		title admin | Example 
+		link rel="stylesheet" href="assets/css/reset.css" type="text/css"
+		link rel="stylesheet" href="assets/css/admin.css" type="text/css"
+
+	body
+		div#wrapper
+			header
+				.container
+					h1 admin
+
+			div#container
+				section
+					header
+						h2 新規登録
+					form method="post" action="/admin/add"
+						div
+							label for="title"
+								| タイトル
+								input#title type="text" name="title"
+						div
+							label for="content" 本文
+							textarea#content name="content"
+
+						div
+							input type="submit" value="保存"
+
+				section
+					header
+						h2 コンテンツ一覧
+					div.container
+						table
+							thead
+								th タイトル
+								th コンテンツ
+								th 操作
+							| {%for content in contents %}
+							tr
+								td.title
+									| {{ content.title}}
+								td.content
+									| {{ content.content }}
+								td.del
+									a href="/admin/del/{{content.id}}" 削除
+							| {% endfor %}

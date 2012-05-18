@@ -1,0 +1,48 @@
+$leftOpenPos: 280px
+$rightOpenPos: -280px
+
+@-webkit-keyframes flipToReverse
+	0%
+		// -webkit-animation-timing-function: cubic-bezier(0, 0, 0.58,1.0)
+	50%
+		-webkit-transform: rotateY(90deg) perspective(600) translate3d(0, 0, 0) scale(0.75)
+	100%
+		-webkit-transform: rotateY(180deg) perspective(1200) translate3d(0, 0, 0) scale(1)
+
+@-webkit-keyframes flipToChange
+	0%
+		-webkit-transform: rotateY(180deg) perspective(1200) translate3d(0, 0, 0) scale(1)
+	50%
+		-webkit-transform: rotateY(90deg) perspective(600) translate3d(0, 0, 0) scale(0.75)
+	100%
+		-webkit-transform: rotateY(0deg) perspective(1200) translate3d(0, 0, 0) scale(1)
+
+
+@-webkit-keyframes flipToIndex
+	0%
+		// -webkit-animation-timing-function: cubic-bezier(0, 0, 0.58,1.0)
+	50%
+		-webkit-transform: rotateY(90deg) perspective(600) translate3d(0, 0, 0) scale(0.75)
+	100%
+		-webkit-transform: rotateY(0deg) perspective(1200) translate3d(0, 0, 0) scale(1)
+
+@-webkit-keyframes flipToBack
+	0%
+		-webkit-transform: rotateY(0deg) perspective(1200) translate3d(0, 0, 0) scale(1)
+	50%
+		-webkit-transform: rotateY(-90deg) perspective(600) translate3d(0, 0, 0) scale(0.75)
+	100%
+		-webkit-transform: rotateY(-180deg) perspective(1200) translate3d(0, 0, 0) scale(1)
+
+
+@-webkit-keyframes SlideReturn
+	100%
+		left: 0
+
+@-webkit-keyframes SlideOpen
+	100%
+		left: $leftOpenPos
+
+@-webkit-keyframes SlideRight
+	100%
+		left: $rightOpenPos

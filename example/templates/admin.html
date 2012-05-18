@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>admin | Example </title>
+    <link href="assets/css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/admin.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="wrapper">
+      <header>
+        <div class="container">
+          <h1>admin</h1>
+        </div>
+      </header>
+      <div id="container">
+        <section>
+          <header>
+            <h2>新規登録</h2>
+          </header>
+          <form action="/admin/add" method="post">
+            <div>
+              <label for="title">タイトル<input id="title" name="title" type="text" />
+              </label>
+            </div>
+            <div>
+              <label for="content">本文</label><textarea id="content" name="content"></textarea>
+            </div>
+            <div>
+              <input type="submit" value="保存" />
+            </div>
+          </form>
+        </section>
+        <section>
+          <header>
+            <h2>コンテンツ一覧</h2>
+          </header>
+          <div class="container">
+            <table>
+              <thead>
+                <th>タイトル</th>
+                <th>コンテンツ</th>
+                <th>操作</th>
+              </thead>{%for content in contents %}<tr>
+                <td class="title">{{ content.title}}</td>
+                <td class="content">{{ content.content }}</td>
+                <td class="del">
+                  <a href="/admin/del/{{content.id}}">削除</a>
+                </td>
+              </tr>{% endfor %}</table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
