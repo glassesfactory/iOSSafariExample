@@ -88,7 +88,6 @@ class iOSExample(object):
 		adapter = self.router.bind_to_environ(request.environ)
 		try:
 			endpoint, values = adapter.match()
-			# return self.controllers[rule.endpoint](**request.args)
 			return getattr(self, endpoint + 'Handler')(request, **values)
 		except NotFound, e:
 			return self.error404()
