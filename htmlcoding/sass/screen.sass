@@ -23,6 +23,8 @@ body
 	#wrapper
 		width: 320px
 
+#container
+	z-index: 1000
 
 .panel
 	padding: 0
@@ -68,7 +70,7 @@ body
 
 #reverse
 	-webkit-transform: rotateY(180deg)
-
+	z-index: 999
 	.preloader
 		position: absolute
 		top: 50%
@@ -77,6 +79,14 @@ body
 	.back
 		position: absolute
 		top: 350px
+
+#slideLeft,
+#slideRight
+	position: absolute
+	padding: 10px
+
+#slideLeft
+	padding-left: 60px
 	
 	
 	

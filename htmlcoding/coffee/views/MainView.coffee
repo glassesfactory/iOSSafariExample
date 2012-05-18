@@ -15,6 +15,7 @@ class MainView extends Backbone.View
 	SWIPE_FORCE_OPEN_THRESHOLD: 30
 	SWIPE_DISPATCHE_HORIZONTAL_THRESHOLD: 120
 	SWIPE_DISPATCHE_VERTICAL_THRESHOLD: 75
+	HOST_NAME:'http://gfios-example.appspot.com/'
 
 	events:
 		'click nav li a':'navClickedHandler'
@@ -36,7 +37,7 @@ class MainView extends Backbone.View
 	navClickedHandler:(event)->
 		event.preventDefault()
 		window.App.status = 'reverse'
-		id = event.currentTarget.href.replace('http://localhost:8084/', '')
+		id = event.currentTarget.href.replace(@HOST_NAME, '')
 		@showContent(id)
 		return false
 
@@ -82,10 +83,12 @@ class MainView extends Backbone.View
 			if @swipeStart.pos[0] > @swipeStop.pos[0]
 				#ひだりっかわのやつあける
 				@_swipeDirection = 'LEFT'
+				$('#slideLeft').empty().html('SLIDE RIGHT')
 				@doForceOpenLeftPanel()
 			else
 				#みぎっかわのやつあける
 				@_swipeDirection = 'RIGHT'
+				$('#slideRight').empty().html('SLIDE LEFT')
 				@doForceOpenRightPanel()
 			@unbindHandlers()
 			return
@@ -97,7 +100,7 @@ class MainView extends Backbone.View
 		stop = @swipeStop
 
 		if start && stop
-			if stop.time - start.time < @SCROLL_CANCEL_DURATION_THRESHOLD &&  Math.abs( start.pos[0] - stop.pos[0] ) > @SWIPE_DISPATCHE_HORIZONTAL_THRESHOLD && Math.abs( start.pos[1] - stop.pos[1] ) < @SWIPE_DISPATCHE_VERTICAL_THRESHOLD
+			if stop.time - start.time < @SCROLL_CANCEL_DURATION_THRESHOLD && Math.abs( start.pos[0] - stop.pos[0] ) > @SWIPE_DISPATCHE_HORIZONTAL_THRESHOLD && Math.abs( start.pos[1] - stop.pos[1] ) < @SWIPE_DISPATCHE_VERTICAL_THRESHOLD
 				@container.trigger('swipe').trigger(if start.pos[0] > stop.pos[0] then "swipeleft" else "swiperight")
 				
 		start = stop = undefined
@@ -150,8 +153,10 @@ class MainView extends Backbone.View
 
 			if tmpX < 0
 				@_swipeDirection = 'LEFT'
+				$('#slideLeft').empty().html('SLIDE RIGHT')
 			else
 				@_swipeDirection = 'RIGHT'
+				$('#slideRight').empty().html('SLIDE LEFT')
 
 			if tmpX > 280
 				tmpX = 280
@@ -192,6 +197,8 @@ class MainView extends Backbone.View
 		@container.unbind 'webkitAnimationEnd', @panelClosedHandler
 		@isOpened = false
 		@_setLeftClose()
+		$('#slideLeft').empty()
+		$('#slideRight').empty()
 
 	panelOpenedHandler:(event)->
 		@container.unbind 'webkitAnimationEnd', @panelOpenedHandler
@@ -211,7 +218,7 @@ class MainView extends Backbone.View
 			window.App.status = 'reverse'
 			window.App.show(@targetID)
 		else
-			window.App.navigate(@targetID, true)
+			window.App.navigate('/'+ @targetID, true)
 
 	flipedBackHandler:()->
 		@container.unbind 'webkitAnimationEnd', @flipedBackHandler

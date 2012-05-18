@@ -42,9 +42,8 @@ class iOSExample(object):
 				data = json.dumps({'id':0,'title':'not found', 'content':'not found'})
 			return Response(data,mimetype="application/json")
 		else:
-			if not self.gotFirstRequest:
-				return self.indexHandler(request)	
-			return self.renderTemplate('index.html')
+			return self.indexHandler(request)	
+
 
 	def adminHandler(self, request):
 		dbs = ContentModel.all().fetch(limit=5)

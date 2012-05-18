@@ -21,13 +21,15 @@ html
 					nav
 						| {% for entry in entries %}
 						li
-							a href="{{entry.id}}"
+							a href="/{{entry.id}}"
 								img src="assets/images/menu.png" width="104" height="29"
 						| {% endfor %}
 						
 					footer
 						img src="assets/images/copyright.png" width="320" height="14"
 			div#reverse.panel
+			div#slideLeft
+			div#slideRight
 				
 		script type="text/javascript" src="assets/js/libs/head.load.min.js"
 		script type="text/javascript" src="assets/js/main.js"

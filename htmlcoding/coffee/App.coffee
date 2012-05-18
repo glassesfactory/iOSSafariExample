@@ -17,7 +17,6 @@ class App extends Backbone.Router
 		@status = 'index'
 		return
 	show:(id)->
-		console.log @status
 		if @status is 'index'
 			@Main.showContent(id)
 		else
