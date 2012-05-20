@@ -20,7 +20,7 @@
             </h1>
           </header>
           <nav>{% for entry in entries %}<li>
-              <a href="{{entry.id}}"><img height="29" src="assets/images/menu.png" width="104" /></a>
+              <a href="/{{entry.id}}"><img height="29" src="assets/images/menu.png" width="104" /></a>
             </li>{% endfor %}</nav>
           <footer>
             <img height="14" src="assets/images/copyright.png" width="320" />
@@ -28,6 +28,8 @@
         </div>
       </div>
       <div class="panel" id="reverse"></div>
+      <div id="slideLeft"></div>
+      <div id="slideRight"></div>
     </div>
     <script src="assets/js/libs/head.load.min.js" type="text/javascript"></script>
     <script src="assets/js/main.js" type="text/javascript"></script>

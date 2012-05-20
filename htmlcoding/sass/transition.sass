@@ -2,8 +2,6 @@ $leftOpenPos: 280px
 $rightOpenPos: -280px
 
 @-webkit-keyframes flipToReverse
-	0%
-		// -webkit-animation-timing-function: cubic-bezier(0, 0, 0.58,1.0)
 	50%
 		-webkit-transform: rotateY(90deg) perspective(600) translate3d(0, 0, 0) scale(0.75)
 	100%
@@ -19,8 +17,6 @@ $rightOpenPos: -280px
 
 
 @-webkit-keyframes flipToIndex
-	0%
-		// -webkit-animation-timing-function: cubic-bezier(0, 0, 0.58,1.0)
 	50%
 		-webkit-transform: rotateY(90deg) perspective(600) translate3d(0, 0, 0) scale(0.75)
 	100%
@@ -39,10 +35,14 @@ $rightOpenPos: -280px
 	100%
 		left: 0
 
-@-webkit-keyframes SlideOpen
+@-webkit-keyframes SlideLeft
+	72%
+		left: 290px
 	100%
 		left: $leftOpenPos
 
 @-webkit-keyframes SlideRight
+	72%
+		left: -290px
 	100%
 		left: $rightOpenPos

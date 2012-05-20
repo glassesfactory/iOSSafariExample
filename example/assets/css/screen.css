@@ -22,6 +22,9 @@ body {
 @media screen and (max-width: 320px) {
   #wrapper {
     width: 320px; } }
+#container {
+  z-index: 1000; }
+
 .panel {
   padding: 0;
   min-height: 418px;
@@ -61,7 +64,8 @@ body {
       top: 405px; }
 
 #reverse {
-  -webkit-transform: rotateY(180deg); }
+  -webkit-transform: rotateY(180deg);
+  z-index: 999; }
   #reverse .preloader {
     position: absolute;
     top: 50%;
@@ -69,3 +73,11 @@ body {
   #reverse .back {
     position: absolute;
     top: 350px; }
+
+#slideLeft,
+#slideRight {
+  position: absolute;
+  padding: 10px; }
+
+#slideLeft {
+  padding-left: 60px; }

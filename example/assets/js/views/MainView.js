@@ -15,6 +15,8 @@ MainView = (function(_super) {
 
   MainView.prototype.el = '#main';
 
+  MainView.prototype.useTapHold = true;
+
   MainView.prototype.holdTimer = null;
 
   MainView.prototype.isCanFlip = false;
@@ -50,21 +52,21 @@ MainView = (function(_super) {
   MainView.prototype.initialize = function(options) {
     _.bindAll(this);
     _.extend(this, options);
+    this.win = window;
     this.container = $('#container');
     this.reverse = $('#reverse');
     this.container.bind('touchstart', this.touchStart);
-    this.container.bind('touchhold', this.touchHoldHandler);
-  };
-
-  MainView.prototype.swipeRightHandler = function(event) {
-    this.container.unbind('swiperight', this.swipeRightHandler);
+    if (this.useTapHold) {
+      this.container.bind('touchhold', this.touchHoldHandler);
+    }
+    return true;
   };
 
   MainView.prototype.navClickedHandler = function(event) {
     var id;
     event.preventDefault();
-    window.App.status = 'reverse';
-    id = event.currentTarget.href.replace('http://localhost:8084/', '');
+    this.win.App.status = 'reverse';
+    id = event.currentTarget.href.replace(this.win.App.HOST_NAME, '');
     this.showContent(id);
     return false;
   };
@@ -89,7 +91,7 @@ MainView = (function(_super) {
       origin: $(data.target)
     };
     this._tmpX = data.touches[0].pageX;
-    this.container.bind('touchmove', this.judgeSwipeStartHandler).one('touchend', this.judgeSwipeFireHandler).one('touchend', this.touchEndHandler);
+    this.container.bind('touchmove', this.judgeSwipeStartHandler).one('touchend', this.touchEndHandler);
     this.holdTimer = setInterval(this.holdTimerHandler, 550);
     if (this.isOpened) {
       return event.preventDefault();
@@ -115,29 +117,19 @@ MainView = (function(_super) {
       event.preventDefault();
       if (this.swipeStart.pos[0] > this.swipeStop.pos[0]) {
         this._swipeDirection = 'LEFT';
+        $('#slideRight').empty();
+        $('#slideLeft').empty().html('SLIDE RIGHT');
         this.doForceOpenLeftPanel();
       } else {
         this._swipeDirection = 'RIGHT';
+        $('#slideLeft').empty();
+        $('#slideRight').empty().html('SLIDE LEFT');
         this.doForceOpenRightPanel();
       }
       this.unbindHandlers();
       return;
     }
     return this._tmpX = this.swipeStop.pos[0];
-  };
-
-  MainView.prototype.judgeSwipeFireHandler = function(event) {
-    var start, stop;
-    this.container.unbind('touchmove', this.judgeSwipeStartHandler);
-    start = this.swipeStart;
-    stop = this.swipeStop;
-    if (start && stop) {
-      if (stop.time - start.time < this.SCROLL_CANCEL_DURATION_THRESHOLD && Math.abs(start.pos[0] - stop.pos[0]) > this.SWIPE_DISPATCHE_HORIZONTAL_THRESHOLD && Math.abs(start.pos[1] - stop.pos[1]) < this.SWIPE_DISPATCHE_VERTICAL_THRESHOLD) {
-        this.container.trigger('swipe').trigger(start.pos[0] > stop.pos[0] ? "swipeleft" : "swiperight");
-      }
-    }
-    start = stop = void 0;
-    return this.swipeStart = this.swipeStop = null;
   };
 
   MainView.prototype.touchEndHandler = function(event) {
@@ -149,32 +141,21 @@ MainView = (function(_super) {
       this._currentLeft = 0;
     }
     if (this.isOpened) {
-      this.container.css({
-        '-webkit-animation-name': 'SlideReturn'
-      });
-      this.container.bind('webkitAnimationEnd', this.panelClosedHandler);
+      this.doClose();
     } else {
       if (Math.abs(this._moveX) > 10) {
         if (this._swipeDirection === 'RIGHT') {
           if (this._currentLeft < 100) {
-            this.container.css({
-              '-webkit-animation-name': 'SlideReturn'
-            });
-            this.container.bind('webkitAnimationEnd', this.panelClosedHandler);
-            return;
+            this.doClose();
           } else {
             this.container.css({
-              '-webkit-animation-name': 'SlideOpen'
+              '-webkit-animation-name': 'SlideLeft'
             });
             this.container.bind('webkitAnimationEnd', this.panelOpenedHandler);
-            return;
           }
         } else if (this._swipeDirection === 'LEFT') {
           if (this._currentLeft > -100) {
-            this.container.css({
-              '-webkit-animation-name': 'SlideReturn'
-            });
-            this.container.bind('webkitAnimationEnd', this.panelClosedHandler);
+            this.doClose();
           } else {
             this.container.css({
               '-webkit-animation-name': 'SlideRight'
@@ -187,7 +168,7 @@ MainView = (function(_super) {
   };
 
   /*
-  	長押し常態中に動かせる
+  	長押し状態中に動かせる
   */
 
 
@@ -201,8 +182,12 @@ MainView = (function(_super) {
       tmpX = this._currentLeft + this._moveX;
       if (tmpX < 0) {
         this._swipeDirection = 'LEFT';
+        $('#slideRight').empty();
+        $('#slideLeft').empty().html('SLIDE RIGHT');
       } else {
         this._swipeDirection = 'RIGHT';
+        $('#slideLeft').empty();
+        $('#slideRight').empty().html('SLIDE LEFT');
       }
       if (tmpX > 280) {
         tmpX = 280;
@@ -235,7 +220,7 @@ MainView = (function(_super) {
   MainView.prototype.doForceOpenRightPanel = function() {
     this.unbindHandlers();
     this.container.css({
-      '-webkit-animation-name': 'SlideOpen'
+      '-webkit-animation-name': 'SlideLeft'
     });
     return this.container.bind('webkitAnimationEnd', this.panelOpenedHandler);
   };
@@ -248,11 +233,20 @@ MainView = (function(_super) {
     return this.container.bind('webkitAnimationEnd', this.panelOpenedHandler);
   };
 
+  MainView.prototype.doClose = function() {
+    this.container.css({
+      '-webkit-animation-name': 'SlideReturn'
+    });
+    return this.container.bind('webkitAnimationEnd', this.panelClosedHandler);
+  };
+
   MainView.prototype.panelClosedHandler = function(event) {
     this.unbindHandlers();
     this.container.unbind('webkitAnimationEnd', this.panelClosedHandler);
     this.isOpened = false;
-    return this._setLeftClose();
+    this._setLeftClose();
+    $('#slideLeft').empty();
+    return $('#slideRight').empty();
   };
 
   MainView.prototype.panelOpenedHandler = function(event) {
@@ -275,18 +269,18 @@ MainView = (function(_super) {
   MainView.prototype.flipedTimerHandler = function() {
     this.container.unbind('webkitAnimationEnd', this.flipedTimerHandler);
     this._setFliped();
-    if (window.App.status === 'index') {
-      window.App.status = 'reverse';
-      return window.App.show(this.targetID);
+    if (this.win.App.status === 'index') {
+      this.win.App.status = 'reverse';
+      return this.win.App.show(this.targetID);
     } else {
-      return window.App.navigate(this.targetID, true);
+      return this.win.App.navigate('/' + this.targetID, true);
     }
   };
 
   MainView.prototype.flipedBackHandler = function() {
     this.container.unbind('webkitAnimationEnd', this.flipedBackHandler);
     this._setDef();
-    return window.App.navigate("", true);
+    return this.win.App.navigate("", true);
   };
 
   MainView.prototype._setFliped = function() {

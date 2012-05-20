@@ -7,7 +7,20 @@ class App extends Backbone.Router
 	status:'index'
 	initialize:(options)->
 		_.extend @, options
-
+		# @HOST_NAME = 
+		loc = window.location.href
+		if loc.match(/https:\/\//i)
+			@HOST_NAME = 'https://' + loc.replace(/https:\/\//,'').split('/')[0]
+		else
+			@HOST_NAME = 'http://' + loc.replace(/http:\/\//,'').split('/')[0]
+		
+		@clientHeight =  document.documentElement.clientHeight + 15
+		$('#wrapper').css
+			'height':@clientHeight
+			'overflow-y':'hidden'
+		$('.panel').css
+			'height':@clientHeight
+			'overflow-y':'hidden'
 		@Main = new MainView()
 		@Content = new ContentView()
 

@@ -36,10 +36,16 @@
   100% {
     left: 0; } }
 
-@-webkit-keyframes SlideOpen {
+@-webkit-keyframes SlideLeft {
+  72% {
+    left: 290px; }
+
   100% {
     left: 280px; } }
 
 @-webkit-keyframes SlideRight {
+  72% {
+    left: -290px; }
+
   100% {
     left: -280px; } }

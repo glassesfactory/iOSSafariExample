@@ -24,7 +24,23 @@ App = (function(_super) {
   App.prototype.status = 'index';
 
   App.prototype.initialize = function(options) {
+    var loc;
     _.extend(this, options);
+    loc = window.location.href;
+    if (loc.match(/https:\/\//i)) {
+      this.HOST_NAME = 'https://' + loc.replace(/https:\/\//, '').split('/')[0];
+    } else {
+      this.HOST_NAME = 'http://' + loc.replace(/http:\/\//, '').split('/')[0];
+    }
+    this.clientHeight = document.documentElement.clientHeight + 15;
+    $('#wrapper').css({
+      'height': this.clientHeight,
+      'overflow-y': 'hidden'
+    });
+    $('.panel').css({
+      'height': this.clientHeight,
+      'overflow-y': 'hidden'
+    });
     this.Main = new MainView();
     return this.Content = new ContentView();
   };
@@ -37,7 +53,6 @@ App = (function(_super) {
   };
 
   App.prototype.show = function(id) {
-    console.log(this.status);
     if (this.status === 'index') {
       this.Main.showContent(id);
     } else {

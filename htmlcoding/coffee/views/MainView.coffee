@@ -1,5 +1,6 @@
 class MainView extends Backbone.View
 	el:'#main'
+	useTapHold:true
 	holdTimer:null
 	isCanFlip:false
 	isBeginOpen:false
@@ -15,7 +16,6 @@ class MainView extends Backbone.View
 	SWIPE_FORCE_OPEN_THRESHOLD: 30
 	SWIPE_DISPATCHE_HORIZONTAL_THRESHOLD: 120
 	SWIPE_DISPATCHE_VERTICAL_THRESHOLD: 75
-	HOST_NAME:'http://gfios-example.appspot.com/'
 
 	events:
 		'click nav li a':'navClickedHandler'
@@ -23,21 +23,19 @@ class MainView extends Backbone.View
 	initialize:(options)->
 		_.bindAll @
 		_.extend @, options
+		@win = window
 		@container = $('#container')
 		@reverse = $('#reverse')
 
 		@container.bind 'touchstart', @touchStart
-		@container.bind 'touchhold', @touchHoldHandler
-		return
-
-	swipeRightHandler:(event)->
-		@container.unbind 'swiperight', @swipeRightHandler
-		return 
+		if @useTapHold
+			@container.bind 'touchhold', @touchHoldHandler
+		return true
 
 	navClickedHandler:(event)->
 		event.preventDefault()
-		window.App.status = 'reverse'
-		id = event.currentTarget.href.replace(@HOST_NAME, '')
+		@win.App.status = 'reverse'
+		id = event.currentTarget.href.replace(@win.App.HOST_NAME, '')
 		@showContent(id)
 		return false
 
@@ -57,7 +55,7 @@ class MainView extends Backbone.View
 
 		@_tmpX = data.touches[0].pageX
 	
-		@container.bind('touchmove', @judgeSwipeStartHandler).one('touchend', @judgeSwipeFireHandler).one('touchend', @touchEndHandler)
+		@container.bind('touchmove', @judgeSwipeStartHandler).one('touchend', @touchEndHandler)
 		@holdTimer = setInterval @holdTimerHandler, 550
 
 		if @isOpened
@@ -83,28 +81,18 @@ class MainView extends Backbone.View
 			if @swipeStart.pos[0] > @swipeStop.pos[0]
 				#ひだりっかわのやつあける
 				@_swipeDirection = 'LEFT'
+				$('#slideRight').empty()
 				$('#slideLeft').empty().html('SLIDE RIGHT')
 				@doForceOpenLeftPanel()
 			else
 				#みぎっかわのやつあける
 				@_swipeDirection = 'RIGHT'
+				$('#slideLeft').empty()
 				$('#slideRight').empty().html('SLIDE LEFT')
 				@doForceOpenRightPanel()
 			@unbindHandlers()
 			return
 		@_tmpX = @swipeStop.pos[0]
-
-	judgeSwipeFireHandler:(event)->
-		@container.unbind 'touchmove', @judgeSwipeStartHandler
-		start = @swipeStart
-		stop = @swipeStop
-
-		if start && stop
-			if stop.time - start.time < @SCROLL_CANCEL_DURATION_THRESHOLD && Math.abs( start.pos[0] - stop.pos[0] ) > @SWIPE_DISPATCHE_HORIZONTAL_THRESHOLD && Math.abs( start.pos[1] - stop.pos[1] ) < @SWIPE_DISPATCHE_VERTICAL_THRESHOLD
-				@container.trigger('swipe').trigger(if start.pos[0] > stop.pos[0] then "swipeleft" else "swiperight")
-				
-		start = stop = undefined
-		@swipeStart = @swipeStop = null
 
 	touchEndHandler:(event)->
 		@isCanFlip = false
@@ -118,30 +106,25 @@ class MainView extends Backbone.View
 			@_currentLeft = 0
 		
 		if @isOpened
-			@container.css '-webkit-animation-name':'SlideReturn'
-			@container.bind 'webkitAnimationEnd', @panelClosedHandler
+			@doClose()
 		else
 			if Math.abs(@_moveX) > 10
 				if @_swipeDirection is 'RIGHT'
 					if @_currentLeft < 100
-						@container.css '-webkit-animation-name':'SlideReturn'
-						@container.bind 'webkitAnimationEnd', @panelClosedHandler
-						return
+						@doClose()
 					else
-						@container.css '-webkit-animation-name':'SlideOpen'
+						@container.css '-webkit-animation-name':'SlideLeft'
 						@container.bind 'webkitAnimationEnd', @panelOpenedHandler
-						return
 				else if @_swipeDirection is 'LEFT'
 					if @_currentLeft > -100
-						@container.css '-webkit-animation-name':'SlideReturn'
-						@container.bind 'webkitAnimationEnd', @panelClosedHandler
+						@doClose()
 					else
 						@container.css '-webkit-animation-name':'SlideRight'
 						@container.bind 'webkitAnimationEnd', @panelOpenedHandler
 		return
 
 	###
-	長押し常態中に動かせる
+	長押し状態中に動かせる
 	###
 	touchMoveHandler:(event)->
 		data = event.originalEvent
@@ -153,9 +136,11 @@ class MainView extends Backbone.View
 
 			if tmpX < 0
 				@_swipeDirection = 'LEFT'
+				$('#slideRight').empty()
 				$('#slideLeft').empty().html('SLIDE RIGHT')
 			else
 				@_swipeDirection = 'RIGHT'
+				$('#slideLeft').empty()
 				$('#slideRight').empty().html('SLIDE LEFT')
 
 			if tmpX > 280
@@ -184,13 +169,17 @@ class MainView extends Backbone.View
 
 	doForceOpenRightPanel:()->
 		@unbindHandlers()
-		@container.css '-webkit-animation-name':'SlideOpen'
+		@container.css '-webkit-animation-name':'SlideLeft'
 		@container.bind 'webkitAnimationEnd', @panelOpenedHandler
 	
 	doForceOpenLeftPanel:()->
 		@unbindHandlers()
 		@container.css '-webkit-animation-name':'SlideRight'
 		@container.bind 'webkitAnimationEnd', @panelOpenedHandler
+
+	doClose:()->
+		@container.css '-webkit-animation-name':'SlideReturn'
+		@container.bind 'webkitAnimationEnd', @panelClosedHandler
 
 	panelClosedHandler:(event)->
 		@unbindHandlers()
@@ -214,16 +203,16 @@ class MainView extends Backbone.View
 	flipedTimerHandler:()->
 		@container.unbind 'webkitAnimationEnd', @flipedTimerHandler
 		@_setFliped()
-		if window.App.status is 'index'
-			window.App.status = 'reverse'
-			window.App.show(@targetID)
+		if @win.App.status is 'index'
+			@win.App.status = 'reverse'
+			@win.App.show(@targetID)
 		else
-			window.App.navigate('/'+ @targetID, true)
+			@win.App.navigate('/'+ @targetID, true)
 
 	flipedBackHandler:()->
 		@container.unbind 'webkitAnimationEnd', @flipedBackHandler
 		@_setDef()
-		window.App.navigate("", true)
+		@win.App.navigate("", true)
 
 	_setFliped:()->
 		@container.css '-webkit-transform':'rotateY(180deg)', '-webkit-animation-name':''
