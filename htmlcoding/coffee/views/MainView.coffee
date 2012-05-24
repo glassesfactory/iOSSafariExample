@@ -219,7 +219,7 @@ class MainView extends Backbone.View
 		@reverse.css '-webkit-transform':'rotateY(0deg)', '-webkit-animation-name':''
 
 	_setDef:()->
-		@container.css '-webkit-transform':'rotateY(0deg)', '-webkit-animation-name':''
+		@container.css '-webkit-transform':'rotateY(90deg)', '-webkit-animation-name':''
 		@reverse.css '-webkit-transform':'rotateY(180deg)', '-webkit-animation-name':''
 
 	_setOpenPos:()->
